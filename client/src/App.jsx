@@ -9,6 +9,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PlaceOrderPage from "./pages/PlaceOrderPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import TrackOrderPage from "./pages/TrackOrderPage";
+import AdminPage from "./pages/AdminPage";
 
 const Layout = ({ children }) => (
   <>
@@ -71,7 +72,7 @@ function App() {
             path="/admin"
             element={
               <ProtectedRoute adminOnly>
-                <Layout><div className="page">Admin Panel - coming soon</div></Layout>
+                <Layout><AdminPage /></Layout>
               </ProtectedRoute>
             }
           />
