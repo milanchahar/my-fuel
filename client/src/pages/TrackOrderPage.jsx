@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../api/axios";
 
-const steps = ["Pending", "Accepted", "Out for Delivery", "Delivered"];
+const steps = [
+  { name: "Pending", icon: "📝", desc: "Order has been placed" },
+  { name: "Accepted", icon: "✅", desc: "Order confirmed by seller" },
+  { name: "Out for Delivery", icon: "🚚", desc: "Fuel is on the way" },
+  { name: "Delivered", icon: "🎉", desc: "Order delivered successfully" },
+];
 
 const TrackOrderPage = () => {
   const { orderId } = useParams();
@@ -23,51 +28,57 @@ const TrackOrderPage = () => {
 
   if (!order) {
     return (
-      <div className="page">
+      <div className="tracker-page">
         <div className="empty-state">Loading order...</div>
       </div>
     );
   }
 
-  const currentStep = steps.indexOf(order.status);
+  const currentStep = steps.findIndex((s) => s.name === order.status);
 
   return (
-    <div className="page">
-      <h1 className="page-title">Track Order</h1>
-      <p className="page-subtitle">Order #{order._id.slice(-8).toUpperCase()}</p>
+    <div className="tracker-page animate-fadeUp">
+      <div className="tracker-head">
+        <h1>Order Tracking</h1>
+        <span className="id-pill">#{order._id.slice(-8).toUpperCase()}</span>
+      </div>
 
-      <div className="tracker-wrap">
-        <div className="tracker-detail">
-          <div className="field">
-            <span>Fuel Type</span>
-            {order.fuelType}
-          </div>
-          <div className="field">
-            <span>Quantity</span>
-            {order.quantity} {order.fuelType === "CNG" ? "kg" : "L"}
-          </div>
-          <div className="field">
-            <span>Location</span>
-            {order.location}
-          </div>
-          <div className="field">
-            <span>Total Price</span>
-            Rs.{order.totalPrice}
-          </div>
+      <div className="card tracker-info">
+        <div className="ti-field">
+          <div className="ti-label">Fuel Type</div>
+          {order.fuelType}
         </div>
+        <div className="ti-field">
+          <div className="ti-label">Quantity</div>
+          {order.quantity} {order.fuelType === "CNG" ? "kg" : "L"}
+        </div>
+        <div className="ti-field">
+          <div className="ti-label">Location</div>
+          {order.location}
+        </div>
+        <div className="ti-field">
+          <div className="ti-label">Total Price</div>
+          Rs.{order.totalPrice}
+        </div>
+      </div>
 
-        <div className="progress-bar">
-          {steps.map((step, i) => (
-            <div key={step} className="progress-step">
-              <div className={`step-dot ${i <= currentStep ? "done" : ""}`}>
-                {i <= currentStep ? "✓" : i + 1}
+      <div className="stepper">
+        {steps.map((step, i) => {
+          const done = i < currentStep;
+          const isCurrent = i === currentStep;
+          return (
+            <div key={step.name} className="step">
+              <div className={`step-circle ${done ? "done" : ""} ${isCurrent ? "current" : ""}`}>
+                {done ? "✓" : step.icon}
               </div>
-              <span className={`step-label ${i <= currentStep ? "done" : ""}`}>
-                {step}
-              </span>
+              <div>
+                <div className={`step-name ${done ? "done" : ""} ${isCurrent ? "current" : ""}`}>
+                  {step.name}
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

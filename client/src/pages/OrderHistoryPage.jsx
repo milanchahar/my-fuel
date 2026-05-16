@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
-const statusClass = {
-  Pending: "status-pending",
-  Accepted: "status-accepted",
-  "Out for Delivery": "status-out",
-  Delivered: "status-delivered",
+const badgeClass = {
+  Pending: "badge-pending",
+  Accepted: "badge-accepted",
+  "Out for Delivery": "badge-delivery",
+  Delivered: "badge-delivered",
 };
+
+const fuelIcon = { Diesel: "⛽", Petrol: "🔴", CNG: "💨", HSD: "🏭" };
+const fuelBg = { Diesel: "fuel-diesel", Petrol: "fuel-petrol", CNG: "fuel-cng", HSD: "fuel-hsd" };
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
@@ -26,47 +29,44 @@ const OrderHistoryPage = () => {
   }, []);
 
   return (
-    <div className="page">
-      <h1 className="page-title">Order History</h1>
-      <p className="page-subtitle">All your fuel orders</p>
+    <div className="page animate-fadeUp">
+      <div className="history-header">
+        <h1>Order History</h1>
+        {orders.length > 0 && <span className="count-pill">{orders.length} orders</span>}
+      </div>
 
       {orders.length === 0 ? (
-        <div className="empty-state">No orders yet. Place your first order!</div>
+        <div className="empty-state">
+          <div className="empty-icon">⛽</div>
+          <h2>No orders yet</h2>
+          <p>Place your first fuel order to get started</p>
+          <button className="btn-primary" onClick={() => navigate("/place-order")}>
+            Place First Order
+          </button>
+        </div>
       ) : (
-        <div className="orders-grid">
+        <div className="orders-list">
           {orders.map((order) => (
-            <div key={order._id} className="order-card">
-              <div className="info">
-                <div className="field">
-                  <span>Fuel Type</span>
-                  {order.fuelType}
+            <div key={order._id} className="card order-row">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div className={`fuel-icon-circle ${fuelBg[order.fuelType]}`}>
+                  {fuelIcon[order.fuelType]}
                 </div>
-                <div className="field">
-                  <span>Quantity</span>
-                  {order.quantity} {order.fuelType === "CNG" ? "kg" : "L"}
-                </div>
-                <div className="field">
-                  <span>Location</span>
-                  {order.location}
-                </div>
-                <div className="field">
-                  <span>Total Price</span>
-                  Rs.{order.totalPrice}
-                </div>
-                <div className="field">
-                  <span>Delivery Time</span>
-                  {new Date(order.deliveryTime).toLocaleString()}
+                <div className="order-meta">
+                  <div className="om-id">#{order._id.slice(-8).toUpperCase()}</div>
+                  <div className="om-date">{new Date(order.placedAt).toLocaleDateString()}</div>
                 </div>
               </div>
-              <div className="right-col">
-                <span className={`status-badge ${statusClass[order.status]}`}>
-                  {order.status}
-                </span>
-                <button
-                  className="track-btn"
-                  onClick={() => navigate(`/track/${order._id}`)}
-                >
-                  Track Order
+              <div className="order-details">
+                <span>{order.location}</span>
+                <span>{order.quantity} {order.fuelType === "CNG" ? "kg" : "L"} {order.fuelType}</span>
+                <span>{new Date(order.deliveryTime).toLocaleString()}</span>
+              </div>
+              <div className="order-right">
+                <span className="order-price">Rs.{order.totalPrice}</span>
+                <span className={`badge ${badgeClass[order.status]}`}>{order.status}</span>
+                <button className="track-btn" onClick={() => navigate(`/track/${order._id}`)}>
+                  Track →
                 </button>
               </div>
             </div>

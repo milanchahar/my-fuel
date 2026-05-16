@@ -3,12 +3,9 @@ import API from "../api/axios";
 import toast from "react-hot-toast";
 
 const statuses = ["Pending", "Accepted", "Out for Delivery", "Delivered"];
-
-const statusClass = {
-  Pending: "status-pending",
-  Accepted: "status-accepted",
-  "Out for Delivery": "status-out",
-  Delivered: "status-delivered",
+const badgeClass = {
+  Pending: "badge-pending", Accepted: "badge-accepted",
+  "Out for Delivery": "badge-delivery", Delivered: "badge-delivered",
 };
 
 const AdminPage = () => {
@@ -25,9 +22,7 @@ const AdminPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  useEffect(() => { fetchOrders(); }, []);
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
@@ -40,49 +35,51 @@ const AdminPage = () => {
   };
 
   const filtered = orders.filter((o) => {
-    const matchesSearch =
-      !search ||
+    const matchSearch = !search ||
       o.userId?.name?.toLowerCase().includes(search.toLowerCase()) ||
       o.location?.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = !statusFilter || o.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchStatus = !statusFilter || o.status === statusFilter;
+    return matchSearch && matchStatus;
   });
 
-  const totalRevenue = filtered.reduce((sum, o) => sum + o.totalPrice, 0);
+  const revenue = filtered.reduce((s, o) => s + o.totalPrice, 0);
+  const pending = filtered.filter((o) => o.status === "Pending").length;
+  const outForDelivery = filtered.filter((o) => o.status === "Out for Delivery").length;
 
   return (
-    <div className="page">
-      <h1 className="page-title">Admin Panel</h1>
-      <p className="page-subtitle">Manage all fuel orders</p>
+    <div className="page-wide animate-fadeUp">
+      <h1 style={{ fontSize: 28, marginBottom: 8 }}>Admin Panel</h1>
+      <p style={{ color: '#9ca3af', marginBottom: 24 }}>Manage all fuel orders</p>
 
       <div className="admin-stats">
-        <div className="stat-card">
-          <p className="label">Total Orders</p>
-          <p className="value">{filtered.length}</p>
+        <div className="card stat-card">
+          <div className="stat-icon">📦</div>
+          <p className="stat-label">Total Orders</p>
+          <p className="stat-value color-amber">{filtered.length}</p>
         </div>
-        <div className="stat-card">
-          <p className="label">Total Revenue</p>
-          <p className="value">Rs.{totalRevenue.toFixed(2)}</p>
+        <div className="card stat-card">
+          <div className="stat-icon">⏳</div>
+          <p className="stat-label">Pending</p>
+          <p className="stat-value color-blue">{pending}</p>
+        </div>
+        <div className="card stat-card">
+          <div className="stat-icon">🚚</div>
+          <p className="stat-label">Out for Delivery</p>
+          <p className="stat-value color-purple">{outForDelivery}</p>
+        </div>
+        <div className="card stat-card">
+          <div className="stat-icon">💰</div>
+          <p className="stat-label">Revenue</p>
+          <p className="stat-value color-amber">Rs.{revenue.toFixed(0)}</p>
         </div>
       </div>
 
       <div className="admin-filters">
-        <input
-          type="text"
-          placeholder="Search by name or location..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="filter-input"
-        />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="filter-select"
-        >
+        <input type="text" placeholder="Search by name or location..." value={search}
+          onChange={(e) => setSearch(e.target.value)} className="input" />
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="select" style={{ maxWidth: 200 }}>
           <option value="">All Statuses</option>
-          {statuses.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
+          {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
@@ -90,104 +87,51 @@ const AdminPage = () => {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Fuel</th>
-              <th>Qty</th>
-              <th>Location</th>
-              <th>Total</th>
-              <th>Delivery Time</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>Order ID</th><th>Customer</th><th>Fuel</th><th>Qty</th>
+              <th>Location</th><th>Total</th><th>Time</th><th>Status</th><th>Action</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr>
-                <td colSpan="9" className="empty-row">No orders found</td>
+              <tr><td colSpan="9" style={{ textAlign: 'center', color: '#4b5563', padding: 32 }}>No orders found</td></tr>
+            ) : filtered.map((o) => (
+              <tr key={o._id}>
+                <td className="order-id">#{o._id.slice(-6).toUpperCase()}</td>
+                <td>{o.userId?.name || "N/A"}</td>
+                <td>{o.fuelType}</td>
+                <td>{o.quantity}</td>
+                <td>{o.location}</td>
+                <td>Rs.{o.totalPrice}</td>
+                <td>{new Date(o.deliveryTime).toLocaleString()}</td>
+                <td><span className={`badge ${badgeClass[o.status]}`}>{o.status}</span></td>
+                <td>
+                  <select value={o.status} onChange={(e) => handleStatusChange(o._id, e.target.value)} className="action-select">
+                    {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </td>
               </tr>
-            ) : (
-              filtered.map((order) => (
-                <tr key={order._id}>
-                  <td className="order-id">#{order._id.slice(-6).toUpperCase()}</td>
-                  <td>{order.userId?.name || "N/A"}</td>
-                  <td>{order.fuelType}</td>
-                  <td>{order.quantity}</td>
-                  <td>{order.location}</td>
-                  <td>Rs.{order.totalPrice}</td>
-                  <td>{new Date(order.deliveryTime).toLocaleString()}</td>
-                  <td>
-                    <span className={`status-badge ${statusClass[order.status]}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td>
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                      className="action-select"
-                    >
-                      {statuses.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
       <div className="mobile-orders">
-        {filtered.length === 0 ? (
-          <div className="empty-state">No orders found</div>
-        ) : (
-          filtered.map((order) => (
-            <div key={order._id} className="order-card">
-              <div className="info">
-                <div className="field">
-                  <span>Order ID</span>
-                  #{order._id.slice(-6).toUpperCase()}
-                </div>
-                <div className="field">
-                  <span>Customer</span>
-                  {order.userId?.name || "N/A"}
-                </div>
-                <div className="field">
-                  <span>Fuel</span>
-                  {order.fuelType} - {order.quantity}{order.fuelType === "CNG" ? "kg" : "L"}
-                </div>
-                <div className="field">
-                  <span>Location</span>
-                  {order.location}
-                </div>
-                <div className="field">
-                  <span>Total</span>
-                  Rs.{order.totalPrice}
-                </div>
-                <div className="field">
-                  <span>Delivery</span>
-                  {new Date(order.deliveryTime).toLocaleString()}
-                </div>
-              </div>
-              <div className="right-col">
-                <span className={`status-badge ${statusClass[order.status]}`}>
-                  {order.status}
-                </span>
-                <select
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                  className="action-select"
-                >
-                  {statuses.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
+        {filtered.map((o) => (
+          <div key={o._id} className="card" style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+              <span style={{ fontFamily: 'monospace', color: '#f59e0b', fontSize: 13 }}>#{o._id.slice(-6).toUpperCase()}</span>
+              <span className={`badge ${badgeClass[o.status]}`}>{o.status}</span>
             </div>
-          ))
-        )}
+            <p style={{ fontSize: 14, marginBottom: 4 }}><strong>{o.userId?.name}</strong> — {o.fuelType} {o.quantity}{o.fuelType === "CNG" ? "kg" : "L"}</p>
+            <p style={{ fontSize: 13, color: '#9ca3af', marginBottom: 12 }}>{o.location}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, color: '#f59e0b' }}>Rs.{o.totalPrice}</span>
+              <select value={o.status} onChange={(e) => handleStatusChange(o._id, e.target.value)} className="action-select">
+                {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

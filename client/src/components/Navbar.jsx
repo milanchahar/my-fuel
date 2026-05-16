@@ -12,16 +12,22 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="logo">MyFuels</div>
+      <div className="logo">
+        <span className="my">My</span><span className="fuels">Fuels</span>
+      </div>
       <div className="nav-links">
         <NavLink to="/dashboard">Dashboard</NavLink>
         <NavLink to="/place-order">Place Order</NavLink>
         <NavLink to="/history">History</NavLink>
         {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
       </div>
-      <button onClick={handleLogout} className="logout-btn">
-        Logout
-      </button>
+      <div className="nav-right">
+        <div className="user-info">
+          <div className="user-avatar">{user?.name?.charAt(0).toUpperCase()}</div>
+          <span className="user-name">{user?.name}</span>
+        </div>
+        <button onClick={handleLogout} className="logout-btn">Logout</button>
+      </div>
     </nav>
   );
 };

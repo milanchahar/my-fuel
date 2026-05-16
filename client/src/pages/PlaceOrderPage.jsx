@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import toast from "react-hot-toast";
 
-const rates = {
-  Diesel: 94.5,
-  Petrol: 102.3,
-  CNG: 76,
-  HSD: 91.2,
-};
+const fuels = [
+  { name: "Diesel", icon: "⛽", rate: 94.5, unit: "L" },
+  { name: "Petrol", icon: "🔴", rate: 102.3, unit: "L" },
+  { name: "CNG", icon: "💨", rate: 76, unit: "kg" },
+  { name: "HSD", icon: "🏭", rate: 91.2, unit: "L" },
+];
 
 const PlaceOrderPage = () => {
   const [fuelType, setFuelType] = useState("Diesel");
@@ -18,8 +18,8 @@ const PlaceOrderPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const totalPrice = quantity > 0 ? (rates[fuelType] * quantity).toFixed(2) : "0.00";
-  const unit = fuelType === "CNG" ? "kg" : "L";
+  const selected = fuels.find((f) => f.name === fuelType);
+  const total = quantity > 0 ? (selected.rate * quantity).toFixed(2) : "0.00";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,58 +36,70 @@ const PlaceOrderPage = () => {
   };
 
   return (
-    <div className="page">
-      <h1 className="page-title">Place New Order</h1>
-      <p className="page-subtitle">Fill in the details below</p>
+    <div className="page animate-fadeUp">
+      <h1 style={{ fontSize: 28, marginBottom: 8 }}>Place Fuel Order</h1>
+      <p style={{ color: '#9ca3af', marginBottom: 32 }}>Select fuel type and fill in delivery details</p>
 
-      <form onSubmit={handleSubmit} className="form-box" style={{ maxWidth: 520 }}>
-        <label>Fuel Type</label>
-        <select value={fuelType} onChange={(e) => setFuelType(e.target.value)}>
-          <option>Diesel</option>
-          <option>Petrol</option>
-          <option>CNG</option>
-          <option>HSD</option>
-        </select>
+      <form onSubmit={handleSubmit}>
+        <div className="order-layout">
+          <div>
+            <label className="label">Fuel Type</label>
+            <div className="fuel-grid">
+              {fuels.map((f) => (
+                <div key={f.name}
+                  className={`fuel-card ${fuelType === f.name ? "selected" : ""}`}
+                  onClick={() => setFuelType(f.name)}>
+                  <div className="fc-icon">{f.icon}</div>
+                  <div className="fc-name">{f.name}</div>
+                  <div className="fc-rate">Rs.{f.rate}/{f.unit}</div>
+                </div>
+              ))}
+            </div>
 
-        <label>Quantity ({unit})</label>
-        <input
-          type="number"
-          min="1"
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          placeholder="Enter quantity"
-          required
-        />
+            <div style={{ marginBottom: 20 }}>
+              <label className="label">Quantity ({selected.unit})</label>
+              <input type="number" min="1" value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                placeholder="Enter quantity" required className="input" />
+            </div>
 
-        <label>Delivery Location</label>
-        <input
-          type="text"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="Enter delivery address"
-          required
-        />
+            <div style={{ marginBottom: 20 }}>
+              <label className="label">Delivery Location</label>
+              <input type="text" value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Enter delivery address" required className="input" />
+            </div>
 
-        <label>Preferred Delivery Time</label>
-        <input
-          type="datetime-local"
-          value={deliveryTime}
-          onChange={(e) => setDeliveryTime(e.target.value)}
-          required
-        />
+            <div style={{ marginBottom: 20 }}>
+              <label className="label">Preferred Delivery Time</label>
+              <input type="datetime-local" value={deliveryTime}
+                onChange={(e) => setDeliveryTime(e.target.value)}
+                required className="input" />
+            </div>
+          </div>
 
-        <div className="price-preview">
-          <span className="price-label">
-            {quantity > 0
-              ? `${quantity} ${unit} x Rs.${rates[fuelType]}/${unit}`
-              : "Enter quantity to see price"}
-          </span>
-          <span className="price-value">Rs.{totalPrice}</span>
+          <div className="card summary-card">
+            <h2>Order Summary</h2>
+            <div className="summary-row">
+              <span className="sr-label">Fuel Type</span>
+              <span>{fuelType}</span>
+            </div>
+            <div className="summary-row">
+              <span className="sr-label">Quantity</span>
+              <span>{quantity || 0} {selected.unit}</span>
+            </div>
+            <div className="summary-row">
+              <span className="sr-label">Unit Price</span>
+              <span>Rs.{selected.rate}/{selected.unit}</span>
+            </div>
+            <div className="divider"></div>
+            <div className="summary-total stat-value">Rs.{total}</div>
+            <div className="summary-note">Inclusive of delivery charges</div>
+            <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+              {loading ? "Placing Order..." : "Confirm Order →"}
+            </button>
+          </div>
         </div>
-
-        <button type="submit" disabled={loading} className="btn">
-          {loading ? "Placing Order..." : "Place Order"}
-        </button>
       </form>
     </div>
   );

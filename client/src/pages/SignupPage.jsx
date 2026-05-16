@@ -16,11 +16,7 @@ const SignupPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
+      const { data } = await API.post("/auth/register", { name, email, password });
       login(data);
       toast.success("Account created successfully");
       navigate("/dashboard");
@@ -32,47 +28,40 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="auth-wrapper">
-      <div className="auth-card">
-        <h1>MyFuels</h1>
-        <p className="subtitle">Create your account</p>
-
-        <form onSubmit={handleSubmit} className="form-box">
-          <label>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            required
-          />
-
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            required
-          />
-
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Create a password"
-            required
-          />
-
-          <button type="submit" disabled={loading} className="btn">
+    <div className="auth-split">
+      <div className="auth-left">
+        <div className="bg-text">MYFUELS</div>
+        <form onSubmit={handleSubmit} className="auth-form animate-fadeUp">
+          <h1>Create account</h1>
+          <p className="sub">Get started with MyFuels today</p>
+          <div className="field">
+            <label className="label">Full Name</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+              placeholder="Your name" required className="input" />
+          </div>
+          <div className="field">
+            <label className="label">Email</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com" required className="input" />
+          </div>
+          <div className="field">
+            <label className="label">Password</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              placeholder="Create a password" required className="input" />
+          </div>
+          <button type="submit" disabled={loading} className="btn-primary">
             {loading ? "Creating account..." : "Sign Up"}
           </button>
-
-          <p className="form-footer">
+          <p className="auth-footer">
             Already have an account? <Link to="/login">Sign in</Link>
           </p>
         </form>
+      </div>
+      <div className="auth-right">
+        <div>
+          <p className="tagline">Fuel delivered. Problems solved.</p>
+          <p className="tagline-sub">Order fuel for your business in minutes.</p>
+        </div>
       </div>
     </div>
   );
