@@ -2,19 +2,19 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import DashboardPage from "./pages/DashboardPage";
+import PlaceOrderPage from "./pages/PlaceOrderPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
+import TrackOrderPage from "./pages/TrackOrderPage";
 
-const DashboardPage = () => (
-  <div className="page-placeholder">
-    <h1>Dashboard - coming soon</h1>
-  </div>
-);
-
-const AdminPage = () => (
-  <div className="page-placeholder">
-    <h1>Admin Panel - coming soon</h1>
-  </div>
+const Layout = ({ children }) => (
+  <>
+    <Navbar />
+    {children}
+  </>
 );
 
 function App() {
@@ -39,7 +39,31 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <Layout><DashboardPage /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/place-order"
+            element={
+              <ProtectedRoute>
+                <Layout><PlaceOrderPage /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <Layout><OrderHistoryPage /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/track/:orderId"
+            element={
+              <ProtectedRoute>
+                <Layout><TrackOrderPage /></Layout>
               </ProtectedRoute>
             }
           />
@@ -47,7 +71,7 @@ function App() {
             path="/admin"
             element={
               <ProtectedRoute adminOnly>
-                <AdminPage />
+                <Layout><div className="page">Admin Panel - coming soon</div></Layout>
               </ProtectedRoute>
             }
           />
