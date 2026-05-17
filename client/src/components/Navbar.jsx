@@ -10,6 +10,8 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const isAdmin = user?.role === "admin";
+
   return (
     <nav className="navbar">
       <div className="logo">
@@ -17,9 +19,14 @@ const Navbar = () => {
       </div>
       <div className="nav-links">
         <NavLink to="/dashboard">Dashboard</NavLink>
-        <NavLink to="/place-order">Place Order</NavLink>
-        <NavLink to="/history">History</NavLink>
-        {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
+        {isAdmin ? (
+          <NavLink to="/admin">Admin</NavLink>
+        ) : (
+          <>
+            <NavLink to="/place-order">Place Order</NavLink>
+            <NavLink to="/history">History</NavLink>
+          </>
+        )}
       </div>
       <div className="nav-right">
         <div className="user-info">
