@@ -19,6 +19,7 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -42,6 +43,8 @@ const AdminPage = () => {
       setOrders((prev) =>
         prev.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o))
       );
+      setUpdatingId(orderId);
+      setTimeout(() => setUpdatingId(null), 1000);
       toast.success("Status updated");
     } catch {
       toast.error("Failed to update status");
@@ -137,6 +140,10 @@ const AdminPage = () => {
         </select>
       </div>
 
+      <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 12, paddingLeft: 4 }}>
+        Showing {filtered.length} of {orders.length} orders
+      </div>
+
       <div className="table-wrap">
         <table className="admin-table">
           <thead>
@@ -169,7 +176,10 @@ const AdminPage = () => {
               </tr>
             ) : (
               filtered.map((o) => (
-                <tr key={o._id}>
+                <tr key={o._id} style={{
+                  background: updatingId === o._id ? "rgba(34,197,94,0.05)" : "transparent",
+                  transition: "background 0.3s ease",
+                }}>
                   <td className="order-id">#{o._id.slice(-8).toUpperCase()}</td>
                   <td>{o.userId?.name || "Unknown"}</td>
                   <td>{o.fuelType}</td>
@@ -183,15 +193,22 @@ const AdminPage = () => {
                       value={o.status}
                       onChange={(e) => updateStatus(o._id, e.target.value)}
                       style={{
+                        appearance: "none",
                         background: "#0f0f1a",
                         border: "1px solid rgba(255,255,255,0.1)",
                         borderRadius: 8,
                         color: "#f0f0f8",
-                        padding: "6px 10px",
+                        padding: "7px 32px 7px 12px",
                         fontSize: 12,
                         cursor: "pointer",
                         outline: "none",
+                        transition: "border-color 0.2s ease",
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "right 10px center",
                       }}
+                      onFocus={(e) => e.target.style.borderColor = "#f59e0b"}
+                      onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.1)"}
                     >
                       {STATUS_OPTIONS.map((s) => (
                         <option key={s} value={s}>{s}</option>

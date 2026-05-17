@@ -266,7 +266,25 @@ const PlaceOrderPage = () => {
             </div>
             <div className="divider"></div>
             <div className="summary-total-label">Total</div>
-            <div className="summary-total">₹{total}</div>
+            {quantity && quantity > 0 ? (
+              <div style={{
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontSize: 36, fontWeight: 800, color: "#f0f0f8",
+                marginBottom: 4,
+              }}>
+                ₹{(quantity * activeFuel.price).toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </div>
+            ) : (
+              <div style={{
+                fontSize: 14, color: "#4b5563",
+                fontStyle: "italic", marginBottom: 4,
+              }}>
+                Enter quantity to see total
+              </div>
+            )}
             <div className="summary-note">incl. delivery charges</div>
             <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
               {loading ? "Placing Order..." : "Confirm Order"}

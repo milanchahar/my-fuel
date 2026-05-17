@@ -250,12 +250,14 @@ const AdminDashboard = () => {
 const UserDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState({ total: 0, pending: 0, delivered: 0 });
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const { data } = await API.get("/orders/my");
+        setOrders(data);
         setStats({
           total: data.length,
           pending: data.filter((o) => o.status === "Pending").length,
@@ -267,6 +269,8 @@ const UserDashboard = () => {
     };
     fetchStats();
   }, []);
+
+  const recentOrders = orders.slice(0, 3);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -327,6 +331,109 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
+
+      {recentOrders.length > 0 && (
+        <div style={{ marginTop: 40 }}>
+          <div style={{
+            display: "flex", alignItems: "center",
+            justifyContent: "space-between", marginBottom: 16,
+          }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: "10px",
+              fontSize: 11, letterSpacing: 3,
+              color: "#f59e0b", fontWeight: 600,
+              textTransform: "uppercase",
+            }}>
+              <span style={{ width: 20, height: 2, background: "#f59e0b", display: "inline-block" }} />
+              RECENT ORDERS
+            </div>
+            <span
+              onClick={() => navigate("/history")}
+              style={{
+                color: "#f59e0b", fontSize: 13,
+                fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              View all
+            </span>
+          </div>
+
+          <div style={{
+            background: "#0f0f1a",
+            border: "1px solid rgba(255,255,255,0.06)",
+            borderRadius: 14, overflow: "hidden",
+          }}>
+            {recentOrders.map((order, index) => {
+              const fuelColors = {
+                Diesel: { bg: "rgba(245,158,11,0.12)", fg: "#f59e0b" },
+                Petrol: { bg: "rgba(239,68,68,0.12)", fg: "#ef4444" },
+                CNG: { bg: "rgba(34,197,94,0.12)", fg: "#22c55e" },
+                HSD: { bg: "rgba(59,130,246,0.12)", fg: "#3b82f6" },
+              };
+              const fc = fuelColors[order.fuelType] || fuelColors.Diesel;
+              const statusColors = {
+                Pending: { bg: "rgba(245,158,11,0.15)", fg: "#f59e0b" },
+                Accepted: { bg: "rgba(96,165,250,0.12)", fg: "#60a5fa" },
+                "Out for Delivery": { bg: "rgba(34,197,94,0.12)", fg: "#22c55e" },
+                Delivered: { bg: "rgba(167,139,250,0.12)", fg: "#a78bfa" },
+              };
+              const sc = statusColors[order.status] || statusColors.Pending;
+
+              return (
+                <div key={order._id} style={{
+                  display: "flex", alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "16px 20px",
+                  borderBottom: index < recentOrders.length - 1
+                    ? "1px solid rgba(255,255,255,0.04)" : "none",
+                  transition: "background 0.15s ease",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(245,158,11,0.03)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                onClick={() => navigate(`/track/${order._id}`)}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 8,
+                      background: fc.bg,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontWeight: 800, fontSize: 13, color: fc.fg,
+                    }}>
+                      {order.fuelType[0]}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14, color: "#f0f0f8" }}>
+                        {order.fuelType} — {order.quantity}
+                        {order.fuelType === "CNG" ? "kg" : "L"}
+                      </div>
+                      <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
+                        {order.location?.length > 30
+                          ? order.location.slice(0, 30) + "..."
+                          : order.location}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "#f0f0f8" }}>
+                      ₹{order.totalPrice?.toLocaleString("en-IN")}
+                    </div>
+                    <div style={{
+                      display: "inline-block", marginTop: 4,
+                      padding: "3px 10px", borderRadius: 50,
+                      fontSize: 11, fontWeight: 600,
+                      background: sc.bg, color: sc.fg,
+                    }}>
+                      {order.status}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -39,8 +39,12 @@ const LoginPage = () => {
 
   return (
     <div className="auth-split">
-      <div className="auth-left">
-        <div className="bg-text">MYFUELS</div>
+      <div className="auth-left" style={{ overflow: "hidden" }}>
+        <div className="bg-text" style={{
+          fontSize: "180px", opacity: 0.03,
+          position: "absolute", bottom: 0, left: "-20px", top: "auto",
+          transform: "none",
+        }}>MYFUELS</div>
         <form onSubmit={handleSubmit} className="auth-form animate-fadeUp">
           <div style={{
             display: "flex",
@@ -130,10 +134,87 @@ const LoginPage = () => {
           </p>
         </form>
       </div>
-      <div className="auth-right">
-        <div>
-          <p className="tagline">Fuel delivered. Problems solved.</p>
-          <p className="tagline-sub">Order fuel for your business in minutes.</p>
+
+      <div style={{
+        width: "42%",
+        background: "linear-gradient(145deg, #f59e0b, #d97706)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "60px 52px",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <div style={{
+          position: "absolute", width: "400px", height: "400px",
+          borderRadius: "50%", background: "rgba(0,0,0,0.06)",
+          top: "-100px", right: "-100px",
+        }} />
+        <div style={{
+          position: "absolute", width: "250px", height: "250px",
+          borderRadius: "50%", background: "rgba(0,0,0,0.04)",
+          bottom: "60px", left: "-60px",
+        }} />
+
+        <div style={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 800, fontSize: "22px",
+          color: "#000", position: "relative", zIndex: 1,
+        }}>
+          MyFuels
+        </div>
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h2 style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: "42px", fontWeight: 800,
+            color: "#000", lineHeight: 1.15, marginBottom: "16px",
+          }}>
+            Fuel delivered.<br />Problems solved.
+          </h2>
+          <p style={{
+            color: "rgba(0,0,0,0.6)", fontSize: "15px",
+            marginBottom: "48px",
+          }}>
+            Order fuel for your business in minutes.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {[
+              { number: "180+", label: "Cities covered across India" },
+              { number: "2,000+", label: "Businesses trust MyFuels" },
+              { number: "35,000+", label: "Orders delivered successfully" },
+            ].map((stat) => (
+              <div key={stat.number} style={{
+                display: "flex", alignItems: "center", gap: "16px",
+              }}>
+                <div style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: "28px", fontWeight: 800,
+                  color: "#000", minWidth: "80px",
+                }}>
+                  {stat.number}
+                </div>
+                <div style={{
+                  width: "1px", height: "32px",
+                  background: "rgba(0,0,0,0.2)",
+                }} />
+                <div style={{
+                  fontSize: "13px", color: "rgba(0,0,0,0.65)",
+                  fontWeight: 500,
+                }}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{
+          position: "relative", zIndex: 1,
+          fontSize: "12px", color: "rgba(0,0,0,0.5)",
+        }}>
+          Trusted by Blinkit, Swiggy, Zomato & 2000+ businesses
         </div>
       </div>
     </div>
