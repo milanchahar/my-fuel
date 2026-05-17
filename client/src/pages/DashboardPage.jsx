@@ -139,7 +139,31 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      <div style={{ marginBottom: 40 }}>
+      <div className="quick-section">
+        <div className="section-label">Quick Actions</div>
+        <div className="quick-row">
+          <div className="card quick-card" onClick={() => navigate("/admin")}
+            style={{ borderLeft: "4px solid #22c55e", paddingLeft: 20 }}>
+            <div className="qc-icon" style={{ color: "#22c55e" }}><RiFileListLine /></div>
+            <div>
+              <div className="qc-title">Manage All Orders</div>
+              <div className="qc-desc">View, search and update all orders</div>
+            </div>
+            <div className="qc-arrow"><RiArrowRightLine /></div>
+          </div>
+          <div className="card quick-card" onClick={() => navigate("/admin")}
+            style={{ borderLeft: "4px solid #60a5fa", paddingLeft: 20 }}>
+            <div className="qc-icon" style={{ color: "#60a5fa" }}><RiSearchLine /></div>
+            <div>
+              <div className="qc-title">Search Orders</div>
+              <div className="qc-desc">Find orders by customer or location</div>
+            </div>
+            <div className="qc-arrow"><RiArrowRightLine /></div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginTop: 40 }}>
         <div style={{
           display: "flex", justifyContent: "space-between",
           alignItems: "center", marginBottom: 16,
@@ -246,30 +270,6 @@ const AdminDashboard = () => {
               </select>
             </div>
           ))}
-        </div>
-      </div>
-
-      <div className="quick-section">
-        <div className="section-label">Quick Actions</div>
-        <div className="quick-row">
-          <div className="card quick-card" onClick={() => navigate("/admin")}
-            style={{ borderLeft: "4px solid #22c55e", paddingLeft: 20 }}>
-            <div className="qc-icon" style={{ color: "#22c55e" }}><RiFileListLine /></div>
-            <div>
-              <div className="qc-title">Manage All Orders</div>
-              <div className="qc-desc">View, search and update all orders</div>
-            </div>
-            <div className="qc-arrow"><RiArrowRightLine /></div>
-          </div>
-          <div className="card quick-card" onClick={() => navigate("/admin")}
-            style={{ borderLeft: "4px solid #60a5fa", paddingLeft: 20 }}>
-            <div className="qc-icon" style={{ color: "#60a5fa" }}><RiSearchLine /></div>
-            <div>
-              <div className="qc-title">Search Orders</div>
-              <div className="qc-desc">Find orders by customer or location</div>
-            </div>
-            <div className="qc-arrow"><RiArrowRightLine /></div>
-          </div>
         </div>
       </div>
     </div>

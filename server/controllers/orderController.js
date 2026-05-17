@@ -29,6 +29,20 @@ const placeOrder = async (req, res) => {
       lng: lng || null,
     });
 
+    // notify admins about the new order
+    const io = req.app.get("io");
+    if (io) {
+      io.to("adminRoom").emit("newOrderPlaced", {
+        orderId: order._id,
+        shortId: order._id.toString().slice(-8).toUpperCase(),
+        fuelType: order.fuelType,
+        quantity: order.quantity,
+        location: order.location,
+        customerName: req.user.name,
+        message: `New ${order.fuelType} order from ${req.user.name} — ${order.quantity}${order.fuelType === "CNG" ? "kg" : "L"}`,
+      });
+    }
+
     res.status(201).json(order);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -85,10 +99,22 @@ const updateOrderStatus = async (req, res) => {
       req.params.id,
       { status },
       { new: true }
-    );
+    ).populate("userId", "name email");
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
+    }
+
+    // notify the user whose order got updated
+    const io = req.app.get("io");
+    if (io && order.userId) {
+      io.to(order.userId._id.toString()).emit("orderStatusUpdated", {
+        orderId: order._id,
+        shortId: order._id.toString().slice(-8).toUpperCase(),
+        status: order.status,
+        fuelType: order.fuelType,
+        message: `Your ${order.fuelType} order #${order._id.toString().slice(-8).toUpperCase()} is now ${order.status}`,
+      });
     }
 
     res.json(order);
