@@ -4,10 +4,10 @@ import API from "../api/axios";
 import toast from "react-hot-toast";
 
 const fuels = [
-  { name: "Diesel", icon: "⛽", rate: 94.5, unit: "L" },
-  { name: "Petrol", icon: "🔴", rate: 102.3, unit: "L" },
-  { name: "CNG", icon: "💨", rate: 76, unit: "kg" },
-  { name: "HSD", icon: "🏭", rate: 91.2, unit: "L" },
+  { name: "Diesel", dotColor: "#f59e0b", rate: 94.5, unit: "L" },
+  { name: "Petrol", dotColor: "#ef4444", rate: 102.3, unit: "L" },
+  { name: "CNG", dotColor: "#22c55e", rate: 76, unit: "kg" },
+  { name: "HSD", dotColor: "#3b82f6", rate: 91.2, unit: "L" },
 ];
 
 const PlaceOrderPage = () => {
@@ -37,8 +37,9 @@ const PlaceOrderPage = () => {
 
   return (
     <div className="page animate-fadeUp">
+      <div className="section-label">New Order</div>
       <h1 style={{ fontSize: 28, marginBottom: 8 }}>Place Fuel Order</h1>
-      <p style={{ color: '#9ca3af', marginBottom: 32 }}>Select fuel type and fill in delivery details</p>
+      <p style={{ color: '#6b7280', marginBottom: 32 }}>Select fuel type and fill in delivery details</p>
 
       <form onSubmit={handleSubmit}>
         <div className="order-layout">
@@ -49,9 +50,9 @@ const PlaceOrderPage = () => {
                 <div key={f.name}
                   className={`fuel-card ${fuelType === f.name ? "selected" : ""}`}
                   onClick={() => setFuelType(f.name)}>
-                  <div className="fc-icon">{f.icon}</div>
+                  <span className="fuel-dot" style={{ background: f.dotColor }} />
                   <div className="fc-name">{f.name}</div>
-                  <div className="fc-rate">Rs.{f.rate}/{f.unit}</div>
+                  <div className="fc-rate">₹{f.rate}/{f.unit}</div>
                 </div>
               ))}
             </div>
@@ -79,24 +80,25 @@ const PlaceOrderPage = () => {
           </div>
 
           <div className="card summary-card">
-            <h2>Order Summary</h2>
+            <div className="section-label">Order Summary</div>
             <div className="summary-row">
               <span className="sr-label">Fuel Type</span>
-              <span>{fuelType}</span>
+              <span className="sr-value">{fuelType}</span>
             </div>
             <div className="summary-row">
               <span className="sr-label">Quantity</span>
-              <span>{quantity || 0} {selected.unit}</span>
+              <span className="sr-value">{quantity || 0} {selected.unit}</span>
             </div>
             <div className="summary-row">
               <span className="sr-label">Unit Price</span>
-              <span>Rs.{selected.rate}/{selected.unit}</span>
+              <span className="sr-value">₹{selected.rate}/{selected.unit}</span>
             </div>
             <div className="divider"></div>
-            <div className="summary-total stat-value">Rs.{total}</div>
-            <div className="summary-note">Inclusive of delivery charges</div>
+            <div className="summary-total-label">Total</div>
+            <div className="summary-total">₹{total}</div>
+            <div className="summary-note">incl. delivery charges</div>
             <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-              {loading ? "Placing Order..." : "Confirm Order →"}
+              {loading ? "Placing Order..." : "Confirm Order"}
             </button>
           </div>
         </div>

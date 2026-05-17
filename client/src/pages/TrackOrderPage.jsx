@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../api/axios";
+import { RiCheckboxCircleLine } from "react-icons/ri";
 
 const steps = [
-  { name: "Pending", icon: "📝", desc: "Order has been placed" },
-  { name: "Accepted", icon: "✅", desc: "Order confirmed by seller" },
-  { name: "Out for Delivery", icon: "🚚", desc: "Fuel is on the way" },
-  { name: "Delivered", icon: "🎉", desc: "Order delivered successfully" },
+  { name: "Pending", num: "01", desc: "Order has been placed" },
+  { name: "Accepted", num: "02", desc: "Order confirmed by seller" },
+  { name: "Out for Delivery", num: "03", desc: "Fuel is on the way" },
+  { name: "Delivered", num: "04", desc: "Order delivered successfully" },
 ];
 
 const TrackOrderPage = () => {
@@ -58,24 +59,26 @@ const TrackOrderPage = () => {
         </div>
         <div className="ti-field">
           <div className="ti-label">Total Price</div>
-          Rs.{order.totalPrice}
+          ₹{order.totalPrice}
         </div>
       </div>
 
-      <div className="stepper">
+      <div className="section-label" style={{ marginBottom: 24 }}>Delivery Progress</div>
+
+      <div className="timeline">
         {steps.map((step, i) => {
           const done = i < currentStep;
           const isCurrent = i === currentStep;
           return (
-            <div key={step.name} className="step">
-              <div className={`step-circle ${done ? "done" : ""} ${isCurrent ? "current" : ""}`}>
-                {done ? "✓" : step.icon}
+            <div key={step.name} className="timeline-step">
+              <div className={`timeline-step-number ${done ? "done" : ""} ${isCurrent ? "current" : ""}`}>
+                {done ? <RiCheckboxCircleLine style={{ fontSize: 28 }} /> : step.num}
               </div>
-              <div>
-                <div className={`step-name ${done ? "done" : ""} ${isCurrent ? "current" : ""}`}>
-                  {step.name}
-                </div>
+              <div className={`timeline-step-dot ${done ? "done" : ""} ${isCurrent ? "current" : ""}`} />
+              <div className={`timeline-step-title ${done ? "done" : ""} ${isCurrent ? "current" : ""}`}>
+                {step.name}
               </div>
+              <div className="timeline-step-desc">{step.desc}</div>
             </div>
           );
         })}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
 import toast from "react-hot-toast";
+import { RiFileListLine, RiTimeLine, RiTruckLine, RiMoneyDollarCircleLine } from "react-icons/ri";
 
 const statuses = ["Pending", "Accepted", "Out for Delivery", "Delivered"];
 const badgeClass = {
@@ -48,29 +49,30 @@ const AdminPage = () => {
 
   return (
     <div className="page-wide animate-fadeUp">
+      <div className="section-label">Administration</div>
       <h1 style={{ fontSize: 28, marginBottom: 8 }}>Admin Panel</h1>
-      <p style={{ color: '#9ca3af', marginBottom: 24 }}>Manage all fuel orders</p>
+      <p style={{ color: '#6b7280', marginBottom: 24 }}>Manage all fuel orders</p>
 
       <div className="admin-stats">
         <div className="card stat-card">
-          <div className="stat-icon">📦</div>
+          <div className="stat-icon"><RiFileListLine /></div>
           <p className="stat-label">Total Orders</p>
-          <p className="stat-value color-amber">{filtered.length}</p>
+          <p className="stat-value color-white">{filtered.length}</p>
         </div>
         <div className="card stat-card">
-          <div className="stat-icon">⏳</div>
+          <div className="stat-icon"><RiTimeLine /></div>
           <p className="stat-label">Pending</p>
-          <p className="stat-value color-blue">{pending}</p>
+          <p className="stat-value color-amber">{pending}</p>
         </div>
         <div className="card stat-card">
-          <div className="stat-icon">🚚</div>
+          <div className="stat-icon"><RiTruckLine /></div>
           <p className="stat-label">Out for Delivery</p>
           <p className="stat-value color-purple">{outForDelivery}</p>
         </div>
         <div className="card stat-card">
-          <div className="stat-icon">💰</div>
+          <div className="stat-icon"><RiMoneyDollarCircleLine /></div>
           <p className="stat-label">Revenue</p>
-          <p className="stat-value color-amber">Rs.{revenue.toFixed(0)}</p>
+          <p className="stat-value color-amber">₹{revenue.toFixed(0)}</p>
         </div>
       </div>
 
@@ -101,7 +103,7 @@ const AdminPage = () => {
                 <td>{o.fuelType}</td>
                 <td>{o.quantity}</td>
                 <td>{o.location}</td>
-                <td>Rs.{o.totalPrice}</td>
+                <td>₹{o.totalPrice}</td>
                 <td>{new Date(o.deliveryTime).toLocaleString()}</td>
                 <td><span className={`badge ${badgeClass[o.status]}`}>{o.status}</span></td>
                 <td>
@@ -123,9 +125,9 @@ const AdminPage = () => {
               <span className={`badge ${badgeClass[o.status]}`}>{o.status}</span>
             </div>
             <p style={{ fontSize: 14, marginBottom: 4 }}><strong>{o.userId?.name}</strong> — {o.fuelType} {o.quantity}{o.fuelType === "CNG" ? "kg" : "L"}</p>
-            <p style={{ fontSize: 13, color: '#9ca3af', marginBottom: 12 }}>{o.location}</p>
+            <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>{o.location}</p>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, color: '#f59e0b' }}>Rs.{o.totalPrice}</span>
+              <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, color: '#f0f0f8' }}>₹{o.totalPrice}</span>
               <select value={o.status} onChange={(e) => handleStatusChange(o._id, e.target.value)} className="action-select">
                 {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>

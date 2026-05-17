@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import { RiGasStationFill } from "react-icons/ri";
 
 const badgeClass = {
   Pending: "badge-pending",
@@ -9,7 +10,6 @@ const badgeClass = {
   Delivered: "badge-delivered",
 };
 
-const fuelIcon = { Diesel: "⛽", Petrol: "🔴", CNG: "💨", HSD: "🏭" };
 const fuelBg = { Diesel: "fuel-diesel", Petrol: "fuel-petrol", CNG: "fuel-cng", HSD: "fuel-hsd" };
 
 const OrderHistoryPage = () => {
@@ -37,7 +37,7 @@ const OrderHistoryPage = () => {
 
       {orders.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">⛽</div>
+          <div className="empty-icon"><RiGasStationFill /></div>
           <h2>No orders yet</h2>
           <p>Place your first fuel order to get started</p>
           <button className="btn-primary" onClick={() => navigate("/place-order")}>
@@ -49,8 +49,8 @@ const OrderHistoryPage = () => {
           {orders.map((order) => (
             <div key={order._id} className="card order-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div className={`fuel-icon-circle ${fuelBg[order.fuelType]}`}>
-                  {fuelIcon[order.fuelType]}
+                <div className={`fuel-icon-square ${fuelBg[order.fuelType]}`}>
+                  {order.fuelType?.charAt(0)}
                 </div>
                 <div className="order-meta">
                   <div className="om-id">#{order._id.slice(-8).toUpperCase()}</div>
@@ -63,9 +63,9 @@ const OrderHistoryPage = () => {
                 <span>{new Date(order.deliveryTime).toLocaleString()}</span>
               </div>
               <div className="order-right">
-                <span className="order-price">Rs.{order.totalPrice}</span>
+                <span className="order-price">₹{order.totalPrice}</span>
                 <span className={`badge ${badgeClass[order.status]}`}>{order.status}</span>
-                <button className="track-btn" onClick={() => navigate(`/track/${order._id}`)}>
+                <button className="track-link" onClick={() => navigate(`/track/${order._id}`)}>
                   Track →
                 </button>
               </div>
