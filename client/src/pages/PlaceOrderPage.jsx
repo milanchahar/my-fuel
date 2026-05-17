@@ -3,12 +3,16 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
+import { RiGasStationFill } from "react-icons/ri";
+import { FaFireFlameCurved } from "react-icons/fa6";
+import { BsWind } from "react-icons/bs";
+import { GiOilDrum } from "react-icons/gi";
 
-const fuels = [
-  { name: "Diesel", dotColor: "#f59e0b", rate: 94.5, unit: "L" },
-  { name: "Petrol", dotColor: "#ef4444", rate: 102.3, unit: "L" },
-  { name: "CNG", dotColor: "#22c55e", rate: 76, unit: "kg" },
-  { name: "HSD", dotColor: "#3b82f6", rate: 91.2, unit: "L" },
+const FUEL_TYPES = [
+  { id: "Diesel", label: "Diesel", price: 94.5, unit: "L", icon: RiGasStationFill, color: "#f59e0b" },
+  { id: "Petrol", label: "Petrol", price: 102.3, unit: "L", icon: FaFireFlameCurved, color: "#ef4444" },
+  { id: "CNG", label: "CNG", price: 76.0, unit: "kg", icon: BsWind, color: "#22c55e" },
+  { id: "HSD", label: "HSD", price: 91.2, unit: "L", icon: GiOilDrum, color: "#3b82f6" },
 ];
 
 const AddressInput = ({ value, onSelect }) => {
@@ -100,7 +104,7 @@ const AddressInput = ({ value, onSelect }) => {
 };
 
 const PlaceOrderPage = () => {
-  const [fuelType, setFuelType] = useState("Diesel");
+  const [selectedFuel, setSelectedFuel] = useState("Diesel");
   const [quantity, setQuantity] = useState("");
   const [location, setLocation] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
@@ -108,8 +112,8 @@ const PlaceOrderPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const selected = fuels.find((f) => f.name === fuelType);
-  const total = quantity > 0 ? (selected.rate * quantity).toFixed(2) : "0.00";
+  const activeFuel = FUEL_TYPES.find((f) => f.id === selectedFuel);
+  const total = quantity > 0 ? (activeFuel.price * quantity).toFixed(2) : "0.00";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,7 +130,7 @@ const PlaceOrderPage = () => {
     setLoading(true);
     try {
       await API.post("/orders", {
-        fuelType,
+        fuelType: selectedFuel,
         quantity,
         location,
         deliveryTime: deliveryDateTime.toISOString(),
@@ -151,19 +155,55 @@ const PlaceOrderPage = () => {
           <div>
             <label className="label">Fuel Type</label>
             <div className="fuel-grid">
-              {fuels.map((f) => (
-                <div key={f.name}
-                  className={`fuel-card ${fuelType === f.name ? "selected" : ""}`}
-                  onClick={() => setFuelType(f.name)}>
-                  <span className="fuel-dot" style={{ background: f.dotColor }} />
-                  <div className="fc-name">{f.name}</div>
-                  <div className="fc-rate">₹{f.rate}/{f.unit}</div>
-                </div>
-              ))}
+              {FUEL_TYPES.map((fuel) => {
+                const Icon = fuel.icon;
+                const isActive = selectedFuel === fuel.id;
+                const rgbMap = { Diesel: "245,158,11", Petrol: "239,68,68", CNG: "34,197,94", HSD: "59,130,246" };
+                return (
+                  <div
+                    key={fuel.id}
+                    onClick={() => setSelectedFuel(fuel.id)}
+                    style={{
+                      background: isActive ? `rgba(${rgbMap[fuel.id]},0.08)` : "#0f0f1a",
+                      border: isActive ? `1.5px solid ${fuel.color}` : "1px solid rgba(255,255,255,0.06)",
+                      borderRadius: "12px",
+                      padding: "18px 16px",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                      boxShadow: isActive ? `0 0 0 1px ${fuel.color}22, 0 8px 24px rgba(0,0,0,0.3)` : "none",
+                    }}
+                  >
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 8,
+                      background: `${fuel.color}18`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <Icon size={18} color={fuel.color} />
+                    </div>
+                    <div style={{
+                      fontSize: 15, fontWeight: 600,
+                      color: isActive ? "#f0f0f8" : "#9ca3af",
+                      transition: "color 0.2s ease",
+                    }}>
+                      {fuel.label}
+                    </div>
+                    <div style={{
+                      fontSize: 13,
+                      color: isActive ? fuel.color : "#4b5563",
+                      transition: "color 0.2s ease",
+                    }}>
+                      ₹{fuel.price}/{fuel.unit}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             <div style={{ marginBottom: 20 }}>
-              <label className="label">Quantity ({selected.unit})</label>
+              <label className="label">Quantity ({activeFuel.unit})</label>
               <input type="number" min="1" value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="Enter quantity" required className="input" />
@@ -214,15 +254,15 @@ const PlaceOrderPage = () => {
             <div className="section-label">Order Summary</div>
             <div className="summary-row">
               <span className="sr-label">Fuel Type</span>
-              <span className="sr-value">{fuelType}</span>
+              <span className="sr-value">{selectedFuel}</span>
             </div>
             <div className="summary-row">
               <span className="sr-label">Quantity</span>
-              <span className="sr-value">{quantity || 0} {selected.unit}</span>
+              <span className="sr-value">{quantity || 0} {activeFuel.unit}</span>
             </div>
             <div className="summary-row">
               <span className="sr-label">Unit Price</span>
-              <span className="sr-value">₹{selected.rate}/{selected.unit}</span>
+              <span className="sr-value">₹{activeFuel.price}/{activeFuel.unit}</span>
             </div>
             <div className="divider"></div>
             <div className="summary-total-label">Total</div>
