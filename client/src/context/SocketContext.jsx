@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 import { useAuth } from "./AuthContext";
@@ -13,28 +13,38 @@ const statusColors = {
 };
 
 export const SocketProvider = ({ children }) => {
-  const { user } = useAuth();
-  const socketRef = useRef(null);
+  const { user, loading } = useAuth();
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (!user) return;
+    // Don't connect until auth has finished loading
+    if (loading) return;
+    if (!user) {
+      // No user — clean up any existing socket
+      setSocket((prev) => {
+        if (prev) prev.disconnect();
+        return null;
+      });
+      return;
+    }
 
-    const socket = io(
+    const newSocket = io(
       import.meta.env.VITE_SOCKET_URL || "http://localhost:5001",
       { withCredentials: true }
     );
-    socketRef.current = socket;
 
-    socket.on("connect", () => {
+    newSocket.on("connect", () => {
+      console.log("Socket connected:", newSocket.id);
       if (user.role === "admin") {
-        socket.emit("joinAdmin");
+        newSocket.emit("joinAdmin");
       } else {
-        socket.emit("join", user._id || user.id);
+        newSocket.emit("join", user._id || user.id);
       }
     });
 
+    // User notifications — order status updates
     if (user.role !== "admin") {
-      socket.on("orderStatusUpdated", (data) => {
+      newSocket.on("orderStatusUpdated", (data) => {
         const sc = statusColors[data.status] || statusColors.Pending;
 
         toast.custom(
@@ -73,8 +83,9 @@ export const SocketProvider = ({ children }) => {
       });
     }
 
+    // Admin notifications — new orders
     if (user.role === "admin") {
-      socket.on("newOrderPlaced", (data) => {
+      newSocket.on("newOrderPlaced", (data) => {
         toast.custom(
           (t) => (
             <div
@@ -114,11 +125,20 @@ export const SocketProvider = ({ children }) => {
       });
     }
 
-    return () => socket.disconnect();
-  }, [user]);
+    newSocket.on("connect_error", (err) => {
+      console.error("Socket connection error:", err.message);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+      setSocket(null);
+    };
+  }, [user, loading]);
 
   return (
-    <SocketContext.Provider value={socketRef.current}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   );
