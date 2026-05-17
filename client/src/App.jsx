@@ -10,6 +10,7 @@ import PlaceOrderPage from "./pages/PlaceOrderPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import AdminPage from "./pages/AdminPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
 
 const Layout = ({ children }) => (
   <>
@@ -65,6 +66,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout><TrackOrderPage /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute adminOnly>
+                <Layout><AnalyticsPage /></Layout>
               </ProtectedRoute>
             }
           />

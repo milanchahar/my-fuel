@@ -20,7 +20,10 @@ const Navbar = () => {
       <div className="nav-links">
         <NavLink to="/dashboard">Dashboard</NavLink>
         {isAdmin ? (
-          <NavLink to="/admin">Admin</NavLink>
+          <>
+            <NavLink to="/analytics">Analytics</NavLink>
+            <NavLink to="/admin">Admin</NavLink>
+          </>
         ) : (
           <>
             <NavLink to="/place-order">Place Order</NavLink>
