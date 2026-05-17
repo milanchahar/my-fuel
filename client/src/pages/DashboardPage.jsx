@@ -96,7 +96,7 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      <div style={{
+      <div className="admin-stats" style={{
         display: "grid",
         gridTemplateColumns: "repeat(4, 1fr)",
         gap: 16,
@@ -217,6 +217,35 @@ const AdminDashboard = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="mobile-orders">
+          {recentOrders.map((o) => (
+            <div key={o._id} className="card" style={{ marginBottom: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                <span style={{ fontWeight: 600, fontSize: 14 }}>
+                  {o.userId?.name || "Unknown"}
+                </span>
+                <span className={`badge ${BADGE_MAP[o.status] || ""}`}>{o.status}</span>
+              </div>
+              <p style={{ fontSize: 13, color: "#9ca3af", marginBottom: 4 }}>
+                {o.fuelType} · {o.quantity}{o.fuelType === "CNG" ? "kg" : "L"}
+              </p>
+              <p style={{ fontSize: 12, color: "#6b7280", marginBottom: 12 }}>
+                {o.location?.length > 30 ? o.location.slice(0, 30) + "..." : o.location}
+              </p>
+              <select
+                value={o.status}
+                onChange={(e) => updateStatus(o._id, e.target.value)}
+                className="action-select"
+                style={{ width: "100%" }}
+              >
+                {STATUS_OPTIONS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+          ))}
         </div>
       </div>
 

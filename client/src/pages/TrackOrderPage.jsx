@@ -54,14 +54,13 @@ const TrackOrderPage = () => {
 
   return (
     <div className="page animate-fadeUp" style={{ maxWidth: 1000, margin: "0 auto" }}>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 380px",
+      <div className="track-layout" style={{
+        display: "flex",
         gap: "2rem",
         alignItems: "start",
       }}>
 
-        <div>
+        <div className="track-left" style={{ flex: 1 }}>
           <div style={{
             display: "flex", alignItems: "center",
             gap: 16, marginBottom: 32,
@@ -180,7 +179,7 @@ const TrackOrderPage = () => {
           </div>
         </div>
 
-        <div style={{ position: "sticky", top: 96 }}>
+        <div className="track-right" style={{ width: 380, position: "sticky", top: 96 }}>
           <div style={{
             background: "#0f0f1a",
             border: "1px solid rgba(255,255,255,0.06)",

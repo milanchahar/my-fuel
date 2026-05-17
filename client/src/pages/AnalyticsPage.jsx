@@ -105,16 +105,16 @@ const AnalyticsPage = () => {
           <div style={{ ...shimmerStyle, width: 260, height: 32, marginBottom: 8 }} />
           <div style={{ ...shimmerStyle, width: 320, height: 14 }} />
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
+        <div className="analytics-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} style={{ ...cardBase, ...shimmerStyle, height: 88 }} />
           ))}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "55fr 45fr", gap: 20, marginBottom: 20 }}>
+        <div className="analytics-row" style={{ display: "grid", gridTemplateColumns: "55fr 45fr", gap: 20, marginBottom: 20 }}>
           <div style={{ ...cardBase, ...shimmerStyle, height: 300 }} />
           <div style={{ ...cardBase, ...shimmerStyle, height: 300 }} />
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "60fr 40fr", gap: 20 }}>
+        <div className="analytics-row" style={{ display: "grid", gridTemplateColumns: "60fr 40fr", gap: 20 }}>
           <div style={{ ...cardBase, ...shimmerStyle, height: 300 }} />
           <div style={{ ...cardBase, ...shimmerStyle, height: 300 }} />
         </div>
@@ -192,7 +192,7 @@ const AnalyticsPage = () => {
         </p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
+      <div className="analytics-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
         {summaryCards.map((card) => (
           <div key={card.label} style={{
             ...cardBase, borderLeft: `3px solid ${card.border}`,
@@ -217,7 +217,7 @@ const AnalyticsPage = () => {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "55fr 45fr", gap: 20, marginBottom: 20 }}>
+      <div className="analytics-row" style={{ display: "grid", gridTemplateColumns: "55fr 45fr", gap: 20, marginBottom: 20 }}>
         <div style={cardBase}>
           <p style={{ fontSize: 15, fontWeight: 700, color: "#f0f0f8", marginBottom: 2 }}>
             Orders This Week
@@ -294,7 +294,7 @@ const AnalyticsPage = () => {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "60fr 40fr", gap: 20 }}>
+      <div className="analytics-row" style={{ display: "grid", gridTemplateColumns: "60fr 40fr", gap: 20 }}>
         <div style={cardBase}>
           <p style={{ fontSize: 15, fontWeight: 700, color: "#f0f0f8", marginBottom: 2 }}>
             Revenue by Fuel Type

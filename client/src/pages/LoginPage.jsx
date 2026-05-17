@@ -135,7 +135,7 @@ const LoginPage = () => {
         </form>
       </div>
 
-      <div style={{
+      <div className="auth-amber-panel" style={{
         width: "42%",
         background: "linear-gradient(145deg, #f59e0b, #d97706)",
         display: "flex",
