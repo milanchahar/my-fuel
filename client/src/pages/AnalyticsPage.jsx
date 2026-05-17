@@ -99,7 +99,7 @@ const AnalyticsPage = () => {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px" }} className="animate-fadeUp">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "96px 24px 32px" }} className="animate-fadeUp">
         <div style={{ marginBottom: 32 }}>
           <div style={{ ...shimmerStyle, width: 120, height: 14, marginBottom: 12 }} />
           <div style={{ ...shimmerStyle, width: 260, height: 32, marginBottom: 8 }} />
@@ -124,7 +124,7 @@ const AnalyticsPage = () => {
 
   if (orders.length === 0) {
     return (
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px" }} className="animate-fadeUp">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "96px 24px 32px" }} className="animate-fadeUp">
         <div style={{
           display: "flex", flexDirection: "column",
           alignItems: "center", justifyContent: "center",
@@ -170,7 +170,7 @@ const AnalyticsPage = () => {
   ];
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px" }} className="animate-fadeUp">
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "96px 24px 32px" }} className="animate-fadeUp">
 
       <div style={{ marginBottom: 32 }}>
         <p style={{

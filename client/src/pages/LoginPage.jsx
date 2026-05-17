@@ -122,8 +122,8 @@ const LoginPage = () => {
               transition: "color 0.2s ease",
             }}>
               {role === "admin"
-                ? "🔒 Logging in as Administrator"
-                : "👤 Logging in as User"}
+                ? "Logging in as Administrator"
+                : "Logging in as User"}
             </div>
           </div>
 
