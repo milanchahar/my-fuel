@@ -55,7 +55,7 @@ const AddressInput = ({ value, onSelect }) => {
 
   const handleSelect = (item) => {
     setQuery(item.display_name);
-    onSelect(item.display_name);
+    onSelect(item);
     setSuggestions([]);
     setFocused(false);
   };
@@ -107,6 +107,8 @@ const PlaceOrderPage = () => {
   const [selectedFuel, setSelectedFuel] = useState("Diesel");
   const [quantity, setQuantity] = useState("");
   const [location, setLocation] = useState("");
+  const [deliveryLat, setDeliveryLat] = useState(null);
+  const [deliveryLng, setDeliveryLng] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -134,6 +136,8 @@ const PlaceOrderPage = () => {
         quantity,
         location,
         deliveryTime: deliveryDateTime.toISOString(),
+        lat: deliveryLat,
+        lng: deliveryLng,
       });
       toast.success("Order placed successfully");
       navigate("/history");
@@ -213,7 +217,15 @@ const PlaceOrderPage = () => {
               <label className="label">Delivery Location</label>
               <AddressInput
                 value={location}
-                onSelect={(address) => setLocation(address)}
+                onSelect={(item) => {
+                  if (typeof item === "string") {
+                    setLocation(item);
+                  } else {
+                    setLocation(item.display_name);
+                    setDeliveryLat(parseFloat(item.lat));
+                    setDeliveryLng(parseFloat(item.lon));
+                  }
+                }}
               />
             </div>
 

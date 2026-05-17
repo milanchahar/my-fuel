@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import DeliveryMap from "../components/DeliveryMap";
 
 const STEPS = [
   { id: "Pending", label: "Pending", desc: "Order placed successfully" },
@@ -25,6 +26,8 @@ const TrackOrderPage = () => {
       }
     };
     fetchOrder();
+    const interval = setInterval(fetchOrder, 5000);
+    return () => clearInterval(interval);
   }, [orderId]);
 
   if (!order) {
@@ -180,6 +183,20 @@ const TrackOrderPage = () => {
         </div>
 
         <div className="track-right" style={{ width: 380, position: "sticky", top: 96 }}>
+          <div style={{ marginBottom: 16 }}>
+            <p style={{
+              fontSize: 11, letterSpacing: 3,
+              color: "#f59e0b", fontWeight: 600,
+              textTransform: "uppercase",
+              display: "flex", alignItems: "center", gap: 8,
+              marginBottom: 12,
+            }}>
+              <span style={{ width: 16, height: 2, background: "#f59e0b", display: "inline-block" }} />
+              LIVE ROUTE
+            </p>
+            <DeliveryMap order={order} />
+          </div>
+
           <div style={{
             background: "#0f0f1a",
             border: "1px solid rgba(255,255,255,0.06)",

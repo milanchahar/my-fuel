@@ -46,49 +46,85 @@ const LoginPage = () => {
           transform: "none",
         }}>MYFUELS</div>
         <form onSubmit={handleSubmit} className="auth-form animate-fadeUp">
-          <div style={{
-            display: "flex",
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: "12px",
-            padding: "4px",
-            marginBottom: "28px",
-            gap: "4px",
-          }}>
-            {["user", "admin"].map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  borderRadius: "9px",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  letterSpacing: "0.3px",
-                  transition: "all 0.2s ease",
-                  background: role === r
-                    ? r === "admin"
-                      ? "linear-gradient(135deg, #f59e0b, #d97706)"
-                      : "#1a1a2e"
-                    : "transparent",
-                  color: role === r
-                    ? r === "admin" ? "#000" : "#f0f0f8"
-                    : "#6b7280",
-                  boxShadow: role === r && r === "admin"
-                    ? "0 4px 14px rgba(245,158,11,0.3)"
-                    : role === r
-                    ? "0 1px 0 rgba(255,255,255,0.05) inset"
-                    : "none",
-                }}
-              >
-                {r === "user" ? "User Login" : "Admin Login"}
-              </button>
-            ))}
+          <div style={{ marginBottom: "28px" }}>
+            <p style={{
+              fontSize: 12, fontWeight: 600, color: "#6b7280",
+              textTransform: "uppercase", letterSpacing: 1.5,
+              marginBottom: 10, textAlign: "center",
+            }}>
+              Login as
+            </p>
+            <div style={{
+              display: "flex",
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "14px",
+              padding: "5px",
+              gap: "5px",
+            }}>
+              {["user", "admin"].map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRole(r)}
+                  style={{
+                    flex: 1,
+                    padding: "14px 10px",
+                    borderRadius: "10px",
+                    border: role === r
+                      ? r === "admin"
+                        ? "1.5px solid #f59e0b"
+                        : "1.5px solid rgba(255,255,255,0.2)"
+                      : "1.5px solid transparent",
+                    cursor: "pointer",
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    letterSpacing: "0.3px",
+                    transition: "all 0.25s ease",
+                    background: role === r
+                      ? r === "admin"
+                        ? "linear-gradient(135deg, #f59e0b, #d97706)"
+                        : "#1a1a2e"
+                      : "transparent",
+                    color: role === r
+                      ? r === "admin" ? "#000" : "#f0f0f8"
+                      : "#4b5563",
+                    boxShadow: role === r && r === "admin"
+                      ? "0 4px 20px rgba(245,158,11,0.35)"
+                      : role === r
+                      ? "0 2px 8px rgba(0,0,0,0.3)"
+                      : "none",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                  }}
+                >
+                  {r === "user" ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                  )}
+                  {r === "user" ? "User" : "Admin"}
+                </button>
+              ))}
+            </div>
+            <div style={{
+              textAlign: "center", marginTop: 10,
+              fontSize: 12, fontWeight: 600,
+              color: role === "admin" ? "#f59e0b" : "#60a5fa",
+              transition: "color 0.2s ease",
+            }}>
+              {role === "admin"
+                ? "🔒 Logging in as Administrator"
+                : "👤 Logging in as User"}
+            </div>
           </div>
 
           <h1>{role === "admin" ? "Admin Portal" : "Welcome back"}</h1>

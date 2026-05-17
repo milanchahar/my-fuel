@@ -335,12 +335,17 @@ a { text-decoration: none; color: inherit; }
 .order-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .order-price { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; color: #f0f0f8; }
 .track-link {
-  background: none; border: none; color: #f59e0b;
-  cursor: pointer; font-size: 13px; font-weight: 500;
-  font-family: 'Inter', sans-serif; padding: 0;
-  transition: opacity 0.2s;
+  background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.35);
+  color: #f59e0b; cursor: pointer; font-size: 13px; font-weight: 600;
+  font-family: 'Inter', sans-serif; padding: 8px 18px;
+  border-radius: 8px; transition: all 0.2s ease;
+  display: inline-flex; align-items: center; gap: 4px;
 }
-.track-link:hover { opacity: 0.8; }
+.track-link:hover {
+  background: rgba(245,158,11,0.2);
+  border-color: #f59e0b;
+  box-shadow: 0 0 12px rgba(245,158,11,0.15);
+}
 
 .empty-state { text-align: center; padding: 4rem 2rem; }
 .empty-state .empty-icon { font-size: 48px; margin-bottom: 1rem; color: #4b5563; }

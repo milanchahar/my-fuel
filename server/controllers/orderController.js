@@ -9,7 +9,7 @@ const fuelRates = {
 
 const placeOrder = async (req, res) => {
   try {
-    const { fuelType, quantity, location, deliveryTime } = req.body;
+    const { fuelType, quantity, location, deliveryTime, lat, lng } = req.body;
 
     const rate = fuelRates[fuelType];
     if (!rate) {
@@ -25,6 +25,8 @@ const placeOrder = async (req, res) => {
       location,
       deliveryTime,
       totalPrice,
+      lat: lat || null,
+      lng: lng || null,
     });
 
     res.status(201).json(order);
