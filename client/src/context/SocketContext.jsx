@@ -5,6 +5,13 @@ import { useAuth } from "./AuthContext";
 
 const SocketContext = createContext(null);
 
+const statusColors = {
+  Pending: { bg: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "rgba(245,158,11,0.3)" },
+  Accepted: { bg: "rgba(96,165,250,0.15)", color: "#60a5fa", border: "rgba(96,165,250,0.3)" },
+  "Out for Delivery": { bg: "rgba(34,197,94,0.15)", color: "#22c55e", border: "rgba(34,197,94,0.3)" },
+  Delivered: { bg: "rgba(167,139,250,0.15)", color: "#a78bfa", border: "rgba(167,139,250,0.3)" },
+};
+
 export const SocketProvider = ({ children }) => {
   const { user } = useAuth();
   const socketRef = useRef(null);
@@ -13,13 +20,12 @@ export const SocketProvider = ({ children }) => {
     if (!user) return;
 
     const socket = io(
-      import.meta.env.VITE_SOCKET_URL || "http://localhost:5000",
+      import.meta.env.VITE_SOCKET_URL || "http://localhost:5001",
       { withCredentials: true }
     );
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
       if (user.role === "admin") {
         socket.emit("joinAdmin");
       } else {
@@ -27,23 +33,16 @@ export const SocketProvider = ({ children }) => {
       }
     });
 
-    // user listens for their order status changes
     if (user.role !== "admin") {
       socket.on("orderStatusUpdated", (data) => {
-        const icons = {
-          Accepted: "🔵",
-          "Out for Delivery": "🟢",
-          Delivered: "✅",
-          Pending: "🟡",
-        };
-        const icon = icons[data.status] || "📦";
+        const sc = statusColors[data.status] || statusColors.Pending;
 
         toast.custom(
           (t) => (
             <div
               style={{
                 background: "#13131f",
-                border: "1px solid rgba(245,158,11,0.3)",
+                border: `1px solid ${sc.border}`,
                 borderRadius: 12,
                 padding: "14px 18px",
                 display: "flex",
@@ -55,10 +54,13 @@ export const SocketProvider = ({ children }) => {
                 transition: "opacity 0.2s ease",
               }}
             >
-              <span style={{ fontSize: 20, marginTop: 2 }}>{icon}</span>
+              <div style={{
+                width: 10, height: 10, borderRadius: "50%",
+                background: sc.color, marginTop: 5, flexShrink: 0,
+              }} />
               <div>
                 <div style={{ fontWeight: 700, fontSize: 14, color: "#f0f0f8", marginBottom: 4 }}>
-                  Order Update
+                  Order #{data.shortId}
                 </div>
                 <div style={{ fontSize: 13, color: "#9ca3af" }}>
                   {data.message}
@@ -66,12 +68,11 @@ export const SocketProvider = ({ children }) => {
               </div>
             </div>
           ),
-          { duration: 5000, position: "top-right" }
+          { duration: 4000, position: "top-right" }
         );
       });
     }
 
-    // admin listens for new orders coming in
     if (user.role === "admin") {
       socket.on("newOrderPlaced", (data) => {
         toast.custom(
@@ -79,7 +80,7 @@ export const SocketProvider = ({ children }) => {
             <div
               style={{
                 background: "#13131f",
-                border: "1px solid rgba(34,197,94,0.3)",
+                border: "1px solid rgba(245,158,11,0.3)",
                 borderRadius: 12,
                 padding: "14px 18px",
                 display: "flex",
@@ -91,21 +92,24 @@ export const SocketProvider = ({ children }) => {
                 transition: "opacity 0.2s ease",
               }}
             >
-              <span style={{ fontSize: 20, marginTop: 2 }}>⛽</span>
+              <div style={{
+                width: 10, height: 10, borderRadius: "50%",
+                background: "#f59e0b", marginTop: 5, flexShrink: 0,
+              }} />
               <div>
                 <div style={{ fontWeight: 700, fontSize: 14, color: "#f0f0f8", marginBottom: 4 }}>
-                  New Order Received
+                  New Order
                 </div>
                 <div style={{ fontSize: 13, color: "#9ca3af" }}>
                   {data.message}
                 </div>
                 <div style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>
-                  📍 {data.location?.slice(0, 40)}
+                  {data.location?.slice(0, 40)}
                 </div>
               </div>
             </div>
           ),
-          { duration: 6000, position: "top-right" }
+          { duration: 4000, position: "top-right" }
         );
       });
     }

@@ -12,6 +12,7 @@ import OrderHistoryPage from "./pages/OrderHistoryPage";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import AdminPage from "./pages/AdminPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import OrderDetailPage from "./pages/OrderDetailPage";
 
 const Layout = ({ children }) => (
   <>
@@ -60,6 +61,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Layout><OrderHistoryPage /></Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/orders/:orderId"
+              element={
+                <ProtectedRoute>
+                  <Layout><OrderDetailPage /></Layout>
                 </ProtectedRoute>
               }
             />

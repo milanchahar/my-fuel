@@ -3,6 +3,7 @@ import API from "../api/axios";
 import toast from "react-hot-toast";
 import {
   RiFileListLine, RiTimeLine, RiTruckLine, RiMoneyRupeeCircleLine,
+  RiDownloadLine,
 } from "react-icons/ri";
 
 const STATUS_OPTIONS = ["Pending", "Accepted", "Out for Delivery", "Delivered"];
@@ -76,6 +77,29 @@ const AdminPage = () => {
     });
   };
 
+  const exportCSV = () => {
+    const headers = ["Order ID", "Customer", "Fuel Type", "Quantity", "Location", "Total", "Status", "Date/Time"];
+    const rows = filtered.map((o) => [
+      "#" + o._id.slice(-8).toUpperCase(),
+      o.userId?.name || "Unknown",
+      o.fuelType,
+      o.quantity,
+      `"${(o.location || "").replace(/"/g, "'")}"`,
+      o.totalPrice || 0,
+      o.status,
+      formatTime(o.deliveryTime),
+    ]);
+
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `myfuels_orders_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const shimmerStyle = {
     height: 16,
     borderRadius: 4,
@@ -119,7 +143,7 @@ const AdminPage = () => {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 12, margin: "24px 0", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: 12, margin: "24px 0", flexWrap: "wrap", alignItems: "center" }}>
         <input
           placeholder="Search by customer, location, order ID..."
           value={search}
@@ -138,6 +162,24 @@ const AdminPage = () => {
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
+        <button
+          onClick={exportCSV}
+          style={{
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 12, color: "#9ca3af",
+            padding: "12px 20px", cursor: "pointer",
+            fontSize: 13, fontWeight: 600,
+            display: "flex", alignItems: "center", gap: 8,
+            transition: "all 0.2s ease",
+            fontFamily: "'Inter', sans-serif",
+          }}
+          onMouseEnter={(e) => { e.target.style.borderColor = "#f59e0b"; e.target.style.color = "#f59e0b"; }}
+          onMouseLeave={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.color = "#9ca3af"; }}
+        >
+          <RiDownloadLine />
+          Export CSV
+        </button>
       </div>
 
       <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 12, paddingLeft: 4 }}>

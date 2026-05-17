@@ -47,7 +47,12 @@ const OrderHistoryPage = () => {
       ) : (
         <div className="orders-list">
           {orders.map((order) => (
-            <div key={order._id} className="card order-row">
+            <div
+              key={order._id}
+              className="card order-row"
+              onClick={() => navigate(`/orders/${order._id}`)}
+              style={{ cursor: "pointer" }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div className={`fuel-icon-square ${fuelBg[order.fuelType]}`}>
                   {order.fuelType?.charAt(0)}
@@ -65,8 +70,11 @@ const OrderHistoryPage = () => {
               <div className="order-right">
                 <span className="order-price">₹{order.totalPrice}</span>
                 <span className={`badge ${badgeClass[order.status]}`}>{order.status}</span>
-                <button className="track-link" onClick={() => navigate(`/track/${order._id}`)}>
-                  Track →
+                <button
+                  className="track-link"
+                  onClick={(e) => { e.stopPropagation(); navigate(`/track/${order._id}`); }}
+                >
+                  Track
                 </button>
               </div>
             </div>

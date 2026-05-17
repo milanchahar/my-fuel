@@ -29,7 +29,6 @@ const placeOrder = async (req, res) => {
       lng: lng || null,
     });
 
-    // notify admins about the new order
     const io = req.app.get("io");
     if (io) {
       io.to("adminRoom").emit("newOrderPlaced", {
@@ -39,7 +38,7 @@ const placeOrder = async (req, res) => {
         quantity: order.quantity,
         location: order.location,
         customerName: req.user.name,
-        message: `New ${order.fuelType} order from ${req.user.name} — ${order.quantity}${order.fuelType === "CNG" ? "kg" : "L"}`,
+        message: `New ${order.fuelType} order from ${req.user.name} - ${order.quantity}${order.fuelType === "CNG" ? "kg" : "L"}`,
       });
     }
 
@@ -53,6 +52,21 @@ const getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user._id }).sort({ placedAt: -1 });
     res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    if (order.userId.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+    res.json(order);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -105,7 +119,6 @@ const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // notify the user whose order got updated
     const io = req.app.get("io");
     if (io && order.userId) {
       io.to(order.userId._id.toString()).emit("orderStatusUpdated", {
@@ -123,4 +136,4 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = { placeOrder, getMyOrders, getAllOrders, updateOrderStatus };
+module.exports = { placeOrder, getMyOrders, getOrderById, getAllOrders, updateOrderStatus };
